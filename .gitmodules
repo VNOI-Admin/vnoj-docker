@@ -1,3 +1,3 @@
 [submodule "dmoj/repo"]
 	path = dmoj/repo
-	url = https://github.com/DMOJ/online-judge
+	url = https://github.com/VNOI-Admin/OJ
