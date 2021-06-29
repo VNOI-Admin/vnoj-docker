@@ -54,8 +54,8 @@ DATABASES = {
 
 # Internationalization.
 # Documentation: <https://docs.djangoproject.com/en/1.11/topics/i18n/>
-LANGUAGE_CODE = 'en-ca'
-DEFAULT_USER_TIME_ZONE = 'America/Toronto'
+LANGUAGE_CODE = 'vi'
+DEFAULT_USER_TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_I18N = True
 USE_L10N = True
 dUSE_TZ = True
@@ -108,7 +108,7 @@ STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
 ADMINS = ()
 
 # The sender for the aforementioned emails.
-SERVER_EMAIL = 'DMOJ: Modern Online Judge <errors@dmoj.ca>'
+SERVER_EMAIL = 'VNOJ: VNOI Online Judge <vnoj@vnoi.info>'
 
 
 ##################################################
@@ -133,9 +133,9 @@ STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStora
 ############################################
 
 ## DMOJ site display settings.
-SITE_NAME = 'DMOJ'
-SITE_LONG_NAME = 'DMOJ: Modern Online Judge'
-SITE_ADMIN_EMAIL = 'admin@example.com'
+SITE_NAME = 'VNOJ'
+SITE_LONG_NAME = 'VNOJ: VNOI Online Judge'
+SITE_ADMIN_EMAIL = 'leduythuc@vnoi.info'
 TERMS_OF_SERVICE_URL = None
 
 ## Bridge controls.
@@ -149,7 +149,7 @@ BRIDGED_DJANGO_ADDRESS = [('bridged', 9998)]
 
 ## DMOJ features.
 # Set to True to enable full-text searching for problems.
-ENABLE_FTS = True
+ENABLE_FTS = False
 
 # Set of email providers to ban when a user registers, e.g., {'throwawaymail.com'}.
 BAD_MAIL_PROVIDERS = set()
@@ -299,3 +299,5 @@ DMOJ_RESOURCES = '/assets/resources/'
 
 MEDIA_ROOT = '/media/'
 MEDIA_URL = '/media/'
+
+FILE_UPLOAD_PERMISSIONS = 0o644
