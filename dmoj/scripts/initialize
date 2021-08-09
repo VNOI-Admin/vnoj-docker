@@ -1,7 +1,7 @@
 #!/bin/bash
 cd $(dirname $(dirname $0)) || exit
 
-mkdir logs problems media
+mkdir -p logs problems media
 
 cp ../config.js repo/websocket/
 cp ../local_settings.py repo/dmoj/

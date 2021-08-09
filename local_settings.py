@@ -1,4 +1,3 @@
-
 #####################################
 ########## Django settings ##########
 #####################################
@@ -28,19 +27,19 @@ INSTALLED_APPS += ()
 CACHES = {
     'default': {
         'BACKEND': 'django_redis.cache.RedisCache',
-        'LOCATION': 'redis://redis:6379/1',
+        'LOCATION': os.environ.get('REDIS_CACHING_URL', 'redis://redis:6379/0'),
     }
 }
 
 # Your database credentials. Only MySQL is supported by DMOJ.
 # Documentation: <https://docs.djangoproject.com/en/1.11/ref/databases/>
 DATABASES = {
-     'default': {
+    'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.environ.get('MYSQL_DATABASE', ''),
         'USER': os.environ.get('MYSQL_USER', ''),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
-        'HOST': 'db',
+        'HOST': os.environ.get('MYSQL_HOST', 'db'),
         'OPTIONS': {
             'charset': 'utf8mb4',
             'sql_mode': 'STRICT_TRANS_TABLES,NO_ENGINE_SUBSTITUTION',
@@ -58,7 +57,7 @@ LANGUAGE_CODE = 'vi'
 DEFAULT_USER_TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_I18N = True
 USE_L10N = True
-dUSE_TZ = True
+USE_TZ = True
 
 ## django-compressor settings, for speeding up page load times by minifying CSS and JavaScript files.
 # Documentation: https://django-compressor.readthedocs.io/en/latest/
@@ -84,6 +83,7 @@ STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
 
 # The following block is included for your convenience, if you want 
 # to use Gmail.
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_USE_TLS = True
 #EMAIL_HOST = 'smtp.gmail.com'
 #EMAIL_HOST_USER = '<your account>@gmail.com'
@@ -142,10 +142,10 @@ TERMS_OF_SERVICE_URL = None
 # The judge connection address and port; where the judges will connect to the site.
 # You should change this to something your judges can actually connect to 
 # (e.g., a port that is unused and unblocked by a firewall).
-BRIDGED_JUDGE_ADDRESS = [('bridged', 9999)]
+BRIDGED_JUDGE_ADDRESS = [(os.environ.get('BRIDGED_HOST', 'bridged'), 9999)]
 
 # The bridged daemon bind address and port to communicate with the site.
-BRIDGED_DJANGO_ADDRESS = [('bridged', 9998)]
+BRIDGED_DJANGO_ADDRESS = [(os.environ.get('BRIDGED_HOST', 'bridged'), 9998)]
 
 ## DMOJ features.
 # Set to True to enable full-text searching for problems.
@@ -153,6 +153,11 @@ ENABLE_FTS = False
 
 # Set of email providers to ban when a user registers, e.g., {'throwawaymail.com'}.
 BAD_MAIL_PROVIDERS = set()
+
+# The number of submissions that a staff user can rejudge at once without
+# requiring the permission 'Rejudge a lot of submissions'.
+# Uncomment to change the submission limit.
+#DMOJ_SUBMISSIONS_REJUDGE_LIMIT = 10
 
 ## Event server.
 # Uncomment to enable live updating.
@@ -162,19 +167,24 @@ EVENT_DAEMON_USE = True
 #EVENT_DAEMON_POST = '<ws:// URL to post to>'
 
 # If you are using the defaults from the guide, it is this:
-EVENT_DAEMON_POST = 'ws://wsevent:15101/'
+EVENT_DAEMON_POST = os.environ.get('EVENT_DAEMON_POST', 'ws://wsevent:15101/')
 
 # These are the publicly accessed interface configurations.
 # They should match those used by the script.
 EVENT_DAEMON_GET = 'ws://{host}/event/'.format(host=HOST)
 EVENT_DAEMON_GET_SSL = 'wss://{host}/event/'.format(host=HOST)
 EVENT_DAEMON_POLL = '/channels/'
+# i.e. the path to /channels/ exposed by the daemon, through whatever proxy setup you have.
 
 # If you would like to use the AMQP-based event server from <https://github.com/DMOJ/event-server>,
 # uncomment this section instead. This is more involved, and recommended to be done
 # only after you have a working event server.
 #EVENT_DAEMON_AMQP = '<amqp:// URL to connect to, including username and password>'
 #EVENT_DAEMON_AMQP_EXCHANGE = '<AMQP exchange to use>'
+
+## Celery
+CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_URL', 'redis://redis:6379/1')
+CELERY_RESULT_BACKEND = os.environ.get('CELERY_RESULT_BACKEND', 'redis://redis:6379/1')
 
 ## CDN control.
 # Base URL for a copy of ace editor.
@@ -213,27 +223,33 @@ DMOJ_PDF_PROBLEM_CACHE = '/pdfcache'
 # Should be an internal location mapped to the above directory.
 DMOJ_PDF_PROBLEM_INTERNAL = '/pdfcache'
 
+# Enable Selenium PDF generation
 USE_SELENIUM = True
 
+## Data download settings.
+# Uncomment to allow users to download their data
 DMOJ_USER_DATA_DOWNLOAD = True
+
+# Directory to cache user data downloads.
+# It is the administrator's responsibility to clean up old files.
 DMOJ_USER_DATA_CACHE = '/datacache'
+
+# Path to use for nginx's X-Accel-Redirect feature.
+# Should be an internal location mapped to the above directory.
 DMOJ_USER_DATA_INTERNAL = '/datacache'
 
-#############
-## Mathoid ##
-#############
-# Documentation: https://github.com/wikimedia/mathoid
-MATHOID_URL = 'http://mathoid:10044'
-MATHOID_CACHE_ROOT = '/cache/mathoid/'
-MATHOID_CACHE_URL = '//{host}/mathoid/'.format(host=HOST)
+# How often a user can download their data.
+DMOJ_USER_DATA_DOWNLOAD_RATELIMIT = datetime.timedelta(days=1)
 
-############
-## Texoid ##
-############
+## Mathoid settings.
+#MATHOID_URL = 'http://mathoid:10044'
+#MATHOID_CACHE_ROOT = '/cache/mathoid/'
+#MATHOID_CACHE_URL = '//{host}/mathoid/'.format(host=HOST)
 
-TEXOID_URL = 'http://texoid:8888'
-TEXOID_CACHE_ROOT = '/cache/texoid/'
-TEXOID_CACHE_URL = '//{host}/texoid/'.format(host=HOST)
+## Texoid settings.
+#TEXOID_URL = 'http://texoid:8888'
+#TEXOID_CACHE_ROOT = '/cache/texoid/'
+#TEXOID_CACHE_URL = '//{host}/texoid/'.format(host=HOST)
 
 ## ======== Logging Settings ========
 # Documentation: https://docs.djangoproject.com/en/1.9/ref/settings/#logging
@@ -250,6 +266,19 @@ LOGGING = {
         },
     },
     'handlers': {
+        # You may use this handler as example for logging to other files..
+        'bridge': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': '/logs/bridge_log.txt',
+            'maxBytes': 10 * 1024 * 1024,
+            'backupCount': 10,
+            'formatter': 'file',
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'dmoj.throttle_mail.ThrottledEmailHandler',
+        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
@@ -257,10 +286,28 @@ LOGGING = {
         },
     },
     'loggers': {
+        # Site 500 error mails.
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        # Judging logs as received by bridged.
+        'judge.bridge': {
+            'handlers': ['bridge', 'mail_admins'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+        # Catch all log to stderr.
         '': {
             'handlers': ['console'],
-            'level': 'DEBUG',
         },
+        # Other loggers of interest. Configure at will.
+        #  - judge.user: logs naughty user behaviours.
+        #  - judge.problem.pdf: PDF generation log.
+        #  - judge.html: HTML parsing errors when processing problem statements etc.
+        #  - judge.mail.activate: logs for the reply to activate feature.
+        #  - event_socket_server
     },
 }
 
@@ -281,18 +328,6 @@ LOGGING = {
 # You may add whatever django configuration you would like here.
 # Do try to keep it separate so you can quickly patch in new settings.
 
-# Uncomment if you're using HTTPS to ensure CSRF and session cookies are
-# sent only with an HTTPS connection.
-#CSRF_COOKIE_SECURE = True
-#SESSION_COOKIE_SECURE = True
-
-REGISTRATION_OPEN = False
-DMOJ_RATING_COLORS = True
-X_FRAME_OPTIONS = 'DENY'
-
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
-
 DMOJ_PROBLEM_DATA_ROOT = '/problems/'
 
 DMOJ_RESOURCES = '/assets/resources/'
@@ -301,3 +336,5 @@ MEDIA_ROOT = '/media/'
 MEDIA_URL = '/media/'
 
 FILE_UPLOAD_PERMISSIONS = 0o644
+
+VNOJ_CP_TICKET = 5
