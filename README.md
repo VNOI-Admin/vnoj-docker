@@ -141,13 +141,54 @@ In this case, the port that the Nginx instance in the Docker container is publis
 By default, all services (site, bridged, wsevent, db, celery, redis, etc.) run in the same machine. However, it is not ideal for handling a large number of users. In this case, you need to distribute the services to multiple servers. A typical setup would be:
 
 - One central server for nginx, db, redis, bridged, and wsevent
-- Multiple workers, each will run site and celery
+- Multiple workers, each will run nginx, site, and celery
 
 #### Central server
 
 You need to configure `dmoj/nginx/conf.d/nginx.conf` to distribute traffic to workers. Refer to [Nginx docs](https://docs.nginx.com/nginx/admin-guide/load-balancer/http-load-balancer/) for how to do it.
 
-You also need to open these ports for workers to connect to:
+A sample configuration:
+
+```
+upstream site {
+    ip_hash;
+    server srv1.example.com;
+    server srv2.example.com;
+    server srv3.example.com;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    location / {
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Host $http_host;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        proxy_pass http://site/;
+    }
+
+    location /event/ {
+        proxy_pass http://wsevent:15100/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 86400;
+    }
+
+    location /channels/ {
+        proxy_read_timeout 120;
+        proxy_pass http://wsevent:15102/;
+    }
+}
+```
+
+Uncomment `ports` blocks in `dmoj/docker-compose.yml`. You also need to open these ports for workers to connect to:
 
 - db: 3306
 - redis: 6379
@@ -165,5 +206,5 @@ docker-compose up -d nginx db redis bridged wsevent
 You need to configure `dmoj/environment/site.env` and `dmoj/environment/mysql.env` to point to the central server.
 
 ```sh
-docker-compose up -d site celery
+docker-compose up -d nginx site celery
 ```

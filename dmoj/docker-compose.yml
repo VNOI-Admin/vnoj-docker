@@ -8,11 +8,15 @@ services:
       - ./database/:/var/lib/mysql/
     env_file: [environment/mysql.env, environment/mysql-admin.env]
     networks: [db]
+    #ports:
+    #  - 3306:3306
   redis:
     container_name: vnoj_redis
     image: redis:alpine
     restart: unless-stopped
     networks: [site]
+    #ports:
+    #  - 6379:6379
   texoid:
     build:
       context: .
@@ -53,7 +57,7 @@ services:
     working_dir: /site/
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, nginx, db]
-    depends_on: [base, db, redis]
+    depends_on: [base]
   celery:
     build:
       context: .
@@ -67,7 +71,7 @@ services:
     working_dir: /site/
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, db]
-    depends_on: [base, db, redis]
+    depends_on: [base]
   bridged:
     build:
       context: .
@@ -82,6 +86,7 @@ services:
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, nginx, db]
     ports:
+      - 9998:9998
       - 9999:9999
     depends_on: [base, db, redis]
   wsevent:
@@ -95,6 +100,10 @@ services:
     working_dir: /app/site
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, nginx]
+    #ports:
+    #  - 15100:15100
+    #  - 15101:15101
+    #  - 15102:15102
   nginx:
     container_name: vnoj_nginx
     image: nginx:alpine
