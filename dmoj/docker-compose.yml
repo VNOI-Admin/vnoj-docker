@@ -1,7 +1,7 @@
 version: '3.7'
 services:
   db:
-    container_name: dmoj_mysql
+    container_name: vnoj_mysql
     image: mariadb
     restart: unless-stopped
     volumes:
@@ -9,7 +9,7 @@ services:
     env_file: [environment/mysql.env, environment/mysql-admin.env]
     networks: [db]
   redis:
-    container_name: dmoj_redis
+    container_name: vnoj_redis
     image: redis:alpine
     restart: unless-stopped
     networks: [site]
@@ -17,14 +17,14 @@ services:
     build:
       context: .
       dockerfile: ./texoid/Dockerfile
-    image: ninjaclasher/dmoj-texoid
+    image: hieplpvip/vnoj-texoid
     restart: unless-stopped
     networks: [site]
   mathoid:
     build:
       context: .
       dockerfile: ./mathoid/Dockerfile
-    image: ninjaclasher/dmoj-mathoid
+    image: hieplpvip/vnoj-mathoid
     restart: unless-stopped
     volumes:
       - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
@@ -33,13 +33,13 @@ services:
     build:
       context: .
       dockerfile: ./base/Dockerfile
-    image: ninjaclasher/dmoj-base
+    image: hieplpvip/vnoj-base
     network_mode: none
   site:
     build:
       context: .
       dockerfile: ./site/Dockerfile
-    image: ninjaclasher/dmoj-site
+    image: hieplpvip/vnoj-site
     restart: unless-stopped
     volumes:
       - assets:/assets/
@@ -58,7 +58,7 @@ services:
     build:
       context: .
       dockerfile: ./celery/Dockerfile
-    image: ninjaclasher/dmoj-celery
+    image: hieplpvip/vnoj-celery
     restart: unless-stopped
     volumes:
       - datacache:/datacache/
@@ -72,7 +72,7 @@ services:
     build:
       context: .
       dockerfile: ./bridged/Dockerfile
-    image: ninjaclasher/dmoj-bridged
+    image: hieplpvip/vnoj-bridged
     restart: unless-stopped
     volumes:
       - ./logs/:/logs/
@@ -88,7 +88,7 @@ services:
     build:
       context: .
       dockerfile: ./wsevent/Dockerfile
-    image: ninjaclasher/dmoj-wsevent
+    image: hieplpvip/vnoj-wsevent
     restart: unless-stopped
     volumes:
       - ./repo/:/app/site/
@@ -96,7 +96,7 @@ services:
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, nginx]
   nginx:
-    container_name: dmoj_nginx
+    container_name: vnoj_nginx
     image: nginx:alpine
     restart: unless-stopped
     ports:
