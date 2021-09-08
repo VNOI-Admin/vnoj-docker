@@ -94,7 +94,7 @@ services:
     ports:
       - 9998:9998
       - 9999:9999
-    depends_on: [base, db, redis]
+    depends_on: [base]
   wsevent:
     container_name: vnoj_wsevent
     build:
