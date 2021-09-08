@@ -18,6 +18,7 @@ services:
     #ports:
     #  - 6379:6379
   texoid:
+    container_name: vnoj_texoid
     build:
       context: .
       dockerfile: ./texoid/Dockerfile
@@ -25,6 +26,7 @@ services:
     restart: unless-stopped
     networks: [site]
   mathoid:
+    container_name: vnoj_mathoid
     build:
       context: .
       dockerfile: ./mathoid/Dockerfile
@@ -34,12 +36,14 @@ services:
       - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
     networks: [site]
   base:
+    container_name: vnoj_base
     build:
       context: .
       dockerfile: ./base/Dockerfile
     image: hieplpvip/vnoj-base
     network_mode: none
   site:
+    container_name: vnoj_site
     build:
       context: .
       dockerfile: ./site/Dockerfile
@@ -59,6 +63,7 @@ services:
     networks: [site, nginx, db]
     depends_on: [base]
   celery:
+    container_name: vnoj_celery
     build:
       context: .
       dockerfile: ./celery/Dockerfile
@@ -73,6 +78,7 @@ services:
     networks: [site, db]
     depends_on: [base]
   bridged:
+    container_name: vnoj_bridged
     build:
       context: .
       dockerfile: ./bridged/Dockerfile
@@ -90,6 +96,7 @@ services:
       - 9999:9999
     depends_on: [base, db, redis]
   wsevent:
+    container_name: vnoj_wsevent
     build:
       context: .
       dockerfile: ./wsevent/Dockerfile

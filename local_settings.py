@@ -13,7 +13,7 @@
 SECRET_KEY = os.environ.get('SECRET_KEY', '')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', '0') == '1'
-HOST = os.environ.get('HOST', '')
+HOST = os.environ.get('HOST', 'localhost')
 
 # Uncomment and set to the domain names this site is intended to serve.
 # You must do this once you set DEBUG to False.
@@ -36,8 +36,8 @@ CACHES = {
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('MYSQL_DATABASE', ''),
-        'USER': os.environ.get('MYSQL_USER', ''),
+        'NAME': os.environ.get('MYSQL_DATABASE', 'dmoj'),
+        'USER': os.environ.get('MYSQL_USER', 'dmoj'),
         'PASSWORD': os.environ.get('MYSQL_PASSWORD', ''),
         'HOST': os.environ.get('MYSQL_HOST', 'db'),
         'OPTIONS': {
@@ -75,13 +75,13 @@ STATICFILES_FINDERS += ('compressor.finders.CompressorFinder',)
 ########## Email configuration ##########
 #########################################
 # See <https://docs.djangoproject.com/en/1.11/topics/email/#email-backends>
-# for more documentation. You should follow the information there to define 
+# for more documentation. You should follow the information there to define
 # your email settings.
 
 # Use this if you are just testing.
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-# The following block is included for your convenience, if you want 
+# The following block is included for your convenience, if you want
 # to use Gmail.
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 #EMAIL_USE_TLS = True
@@ -116,8 +116,8 @@ SERVER_EMAIL = 'VNOJ: VNOI Online Judge <vnoj@vnoi.info>'
 ##################################################
 # See <https://docs.djangoproject.com/en/1.11/howto/static-files/>.
 
-# Change this to somewhere more permanent., especially if you are using a 
-# webserver to serve the static files. This is the directory where all the 
+# Change this to somewhere more permanent., especially if you are using a
+# webserver to serve the static files. This is the directory where all the
 # static files DMOJ uses will be collected to.
 # You must configure your webserver to serve this directory as /static/ in production.
 STATIC_ROOT = '/assets/static/'
@@ -140,7 +140,7 @@ TERMS_OF_SERVICE_URL = None
 
 ## Bridge controls.
 # The judge connection address and port; where the judges will connect to the site.
-# You should change this to something your judges can actually connect to 
+# You should change this to something your judges can actually connect to
 # (e.g., a port that is unused and unblocked by a firewall).
 BRIDGED_JUDGE_ADDRESS = [(os.environ.get('BRIDGED_HOST', 'bridged'), 9999)]
 
@@ -332,8 +332,10 @@ DMOJ_PROBLEM_DATA_ROOT = '/problems/'
 
 DMOJ_RESOURCES = '/assets/resources/'
 
+SITE_FULL_URL = os.environ.get('SITE_FULL_URL', 'http://localhost/')
+
+MEDIA_URL = os.environ.get('MEDIA_URL', 'http://localhost/')
 MEDIA_ROOT = '/media/'
-MEDIA_URL = '/media/'
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 
