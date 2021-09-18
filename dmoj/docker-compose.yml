@@ -22,7 +22,7 @@ services:
     build:
       context: .
       dockerfile: ./texoid/Dockerfile
-    image: hieplpvip/vnoj-texoid
+    image: vnoj/vnoj-texoid
     restart: unless-stopped
     networks: [site]
   mathoid:
@@ -30,7 +30,7 @@ services:
     build:
       context: .
       dockerfile: ./mathoid/Dockerfile
-    image: hieplpvip/vnoj-mathoid
+    image: vnoj/vnoj-mathoid
     restart: unless-stopped
     volumes:
       - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
@@ -40,14 +40,14 @@ services:
     build:
       context: .
       dockerfile: ./base/Dockerfile
-    image: hieplpvip/vnoj-base
+    image: vnoj/vnoj-base
     network_mode: none
   site:
     container_name: vnoj_site
     build:
       context: .
       dockerfile: ./site/Dockerfile
-    image: hieplpvip/vnoj-site
+    image: vnoj/vnoj-site
     restart: unless-stopped
     volumes:
       - assets:/assets/
@@ -67,7 +67,7 @@ services:
     build:
       context: .
       dockerfile: ./celery/Dockerfile
-    image: hieplpvip/vnoj-celery
+    image: vnoj/vnoj-celery
     restart: unless-stopped
     volumes:
       - datacache:/datacache/
@@ -82,7 +82,7 @@ services:
     build:
       context: .
       dockerfile: ./bridged/Dockerfile
-    image: hieplpvip/vnoj-bridged
+    image: vnoj/vnoj-bridged
     restart: unless-stopped
     volumes:
       - ./logs/:/logs/
@@ -100,7 +100,7 @@ services:
     build:
       context: .
       dockerfile: ./wsevent/Dockerfile
-    image: hieplpvip/vnoj-wsevent
+    image: vnoj/vnoj-wsevent
     restart: unless-stopped
     volumes:
       - ./repo/:/app/site/

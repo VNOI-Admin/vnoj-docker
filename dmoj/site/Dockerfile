@@ -1,4 +1,4 @@
-FROM hieplpvip/vnoj-base:latest
+FROM vnoj/vnoj-base:latest
 
 EXPOSE 8000
 
