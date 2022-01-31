@@ -52,7 +52,8 @@ services:
     volumes:
       - assets:/assets/
       - pdfcache:/pdfcache/
-      - datacache:/datacache/
+      - userdatacache:/userdatacache/
+      - contestdatacache:/contestdatacache/
       - cache:/cache/
       - ./logs/:/logs/
       - ./media/:/media/
@@ -70,7 +71,8 @@ services:
     image: vnoj/vnoj-celery
     restart: unless-stopped
     volumes:
-      - datacache:/datacache/
+      - userdatacache:/userdatacache/
+      - contestdatacache:/contestdatacache/
       - ./logs/:/logs/
       - ./repo/:/site/
     working_dir: /site/
@@ -120,7 +122,8 @@ services:
     volumes:
       - assets:/assets/
       - pdfcache:/pdfcache/
-      - datacache:/datacache/
+      - userdatacache:/userdatacache/
+      - contestdatacache:/contestdatacache/
       - cache:/cache/
       - ./logs/:/logs/
       - ./media/:/media/
@@ -134,5 +137,6 @@ networks:
 volumes:
   assets:
   pdfcache:
-  datacache:
+  userdatacache:
+  contestdatacache:
   cache:

@@ -128,15 +128,32 @@ STATIC_URL = '/static/'
 # Uncomment to use hashed filenames with the cache framework.
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
+DMOJ_RESOURCES = '/assets/resources/'
+
 ############################################
 ########## DMOJ-specific settings ##########
 ############################################
 
 ## DMOJ site display settings.
 SITE_NAME = 'VNOJ'
+SITE_FULL_URL = os.environ.get('SITE_FULL_URL', 'http://localhost/')
 SITE_LONG_NAME = 'VNOJ: VNOI Online Judge'
 SITE_ADMIN_EMAIL = 'leduythuc@vnoi.info'
 TERMS_OF_SERVICE_URL = None
+
+## Media files settings.
+# This is the directory where all the media files are stored.
+# Change this to somewhere more permanent.
+# You must configure your webserver to serve this directory in production.
+MEDIA_ROOT = '/media/'
+
+# URL to access media files.
+MEDIA_URL = os.environ.get('MEDIA_URL', 'http://localhost/')
+
+## Problem data settings.
+# This is the directory where all the problem data are stored.
+# Change this to somewhere more permanent.
+DMOJ_PROBLEM_DATA_ROOT = '/problems/'
 
 ## Bridge controls.
 # The judge connection address and port; where the judges will connect to the site.
@@ -232,14 +249,29 @@ DMOJ_USER_DATA_DOWNLOAD = True
 
 # Directory to cache user data downloads.
 # It is the administrator's responsibility to clean up old files.
-DMOJ_USER_DATA_CACHE = '/datacache'
+DMOJ_USER_DATA_CACHE = '/userdatacache'
 
 # Path to use for nginx's X-Accel-Redirect feature.
 # Should be an internal location mapped to the above directory.
-DMOJ_USER_DATA_INTERNAL = '/datacache'
+DMOJ_USER_DATA_INTERNAL = '/userdatacache'
 
 # How often a user can download their data.
 DMOJ_USER_DATA_DOWNLOAD_RATELIMIT = datetime.timedelta(days=1)
+
+# Uncomment to allow contest authors to download contest data
+DMOJ_CONTEST_DATA_DOWNLOAD = True
+
+# Directory to cache contest data downloads.
+# It is the administrator's responsibility to clean up old files.
+DMOJ_CONTEST_DATA_CACHE = '/contestdatacache'
+
+# Path to use for nginx's X-Accel-Redirect feature.
+# Should be an internal location mapped to the above directory.
+DMOJ_CONTEST_DATA_INTERNAL = '/contestdatacache'
+
+# How often contest data can be exported.
+# This applies per contest, not per user.
+DMOJ_CONTEST_DATA_DOWNLOAD_RATELIMIT = datetime.timedelta(days=1)
 
 ## Mathoid settings.
 #MATHOID_URL = 'http://mathoid:10044'
@@ -327,15 +359,6 @@ LOGGING = {
 ## ======== Custom Configuration ========
 # You may add whatever django configuration you would like here.
 # Do try to keep it separate so you can quickly patch in new settings.
-
-DMOJ_PROBLEM_DATA_ROOT = '/problems/'
-
-DMOJ_RESOURCES = '/assets/resources/'
-
-SITE_FULL_URL = os.environ.get('SITE_FULL_URL', 'http://localhost/')
-
-MEDIA_URL = os.environ.get('MEDIA_URL', 'http://localhost/')
-MEDIA_ROOT = '/media/'
 
 FILE_UPLOAD_PERMISSIONS = 0o644
 

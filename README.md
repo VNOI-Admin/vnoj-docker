@@ -2,6 +2,8 @@
 
 This repository contains the Docker files to run the [VNOJ](https://github.com/VNOI-Admin/OJ). It configures some additional services, such as [Mathoid](https://github.com/wikimedia/mathoid) and [Texoid](https://github.com/DMOJ/texoid).
 
+Based on [dmoj-docker](https://github.com/Ninjaclasher/dmoj-docker).
+
 ## Installation
 
 First, [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docker.com/compose/) must be installed. Installation instructions can be found on their respective websites.
@@ -55,7 +57,7 @@ You will also need to generate the static files:
 $ ./scripts/copy_static
 ```
 
-Finally, the DMOJ comes with fixtures so that the initial install is not blank. They can be loaded with the following commands:
+Finally, the VNOJ comes with fixtures so that the initial install is not blank. They can be loaded with the following commands:
 
 ```sh
 $ ./scripts/manage.py loaddata navbar
@@ -73,7 +75,7 @@ $ docker-compose up -d
 
 ### Migrating
 
-As the DMOJ site is a Django app, you may need to migrate whenever you update. Assuming the site container is running, running the following command should suffice:
+As the VNOJ site is a Django app, you may need to migrate whenever you update. Assuming the site container is running, running the following command should suffice:
 
 ```sh
 $ ./scripts/migrate
