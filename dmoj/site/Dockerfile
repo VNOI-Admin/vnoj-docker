@@ -1,8 +1,15 @@
 FROM vnoj/vnoj-base:latest
 
-RUN curl --location -o pandoc.deb $(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest | grep -o -m 1 "https://github\.com.*pandoc-.*-amd64\.deb") && \
+RUN ARCH=$([ $(uname -m) = "x86_64" ] && echo "amd64" || echo "arm64") && \
+    curl --location -o pandoc.deb $(curl -s https://api.github.com/repos/jgm/pandoc/releases/latest | grep -o -m 1 "https://github\.com.*pandoc-.*-$ARCH\.deb") && \
     dpkg -i pandoc.deb && \
     rm pandoc.deb
+
+RUN apt-get update && \
+    apt-get install -y chromium-driver && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    pip3 install selenium
 
 EXPOSE 8000
 
