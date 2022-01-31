@@ -1,6 +1,6 @@
 # VNOJ Docker
 
-This repository contains the Docker files to run the [VNOJ](https://github.com/VNOI-Admin/OJ). It configures some additional services, such as [Mathoid](https://github.com/wikimedia/mathoid) and [Texoid](https://github.com/DMOJ/texoid).
+This repository contains the Docker files to run the [VNOJ](https://github.com/VNOI-Admin/OJ).
 
 Based on [dmoj-docker](https://github.com/Ninjaclasher/dmoj-docker).
 
@@ -11,10 +11,8 @@ First, [Docker](https://www.docker.com/) and [Docker Compose](https://docs.docke
 Clone the repository:
 
 ```sh
-$ git clone https://github.com/VNOI-Admin/vnoj-docker
-$ cd vnoj-docker
-$ git submodule update --init --recursive
-$ cd dmoj
+$ git clone --recursive https://github.com/VNOI-Admin/vnoj-docker.git
+$ cd vnoj-docker/dmoj
 ```
 
 From now on, it is assumed you are in the `dmoj` directory.
@@ -42,7 +40,7 @@ $ docker-compose pull
 Start up the site, so you can perform the initial migrations and generate the static files:
 
 ```sh
-$ docker-compose up -d site
+$ docker-compose up -d site db redis celery
 ```
 
 You will need to generate the schema for the database, since it is currently empty:
@@ -53,7 +51,7 @@ $ ./scripts/migrate
 
 You will also need to generate the static files:
 
-```
+```sh
 $ ./scripts/copy_static
 ```
 
@@ -65,13 +63,35 @@ $ ./scripts/manage.py loaddata language_small
 $ ./scripts/manage.py loaddata demo
 ```
 
+Keep in mind that the demo fixture creates a superuser account with a username and password of `admin`. You should change the user's password or remove the user entirely.
+
+You can also create a superuser account for yourself:
+
+```sh
+$ ./scripts/manage.py createsuperuser
+```
+
 ## Usage
 
-```
+To start everything:
+
+```sh
 $ docker-compose up -d
 ```
 
+To stop everything:
+
+```sh
+docker-compose down
+```
+
 ## Notes
+
+### Judge server
+
+The judge server is not included in this Docker setup. Please refer to [Setting up a Judge](https://vnoi-admin.github.io/vnoj-docs/#/judge/setting_up_a_judge).
+
+The bridge instance is included in this Docker setup and should be running once you start everything.
 
 ### Migrating
 
@@ -85,7 +105,7 @@ $ ./scripts/migrate
 
 If your static files ever change, you will need to rebuild them:
 
-```
+```sh
 $ ./scripts/copy_static
 ```
 
@@ -210,3 +230,7 @@ You need to configure `dmoj/environment/site.env` and `dmoj/environment/mysql.en
 ```sh
 docker-compose up -d nginx site celery
 ```
+
+### Mathoid and Texoid
+
+This setup also contains Docker files for [Mathoid](https://github.com/wikimedia/mathoid) and [Texoid](https://github.com/DMOJ/texoid), but they are commented out as they are not used in VNOJ. For more information, refer to DMOJ docs for [Mathoid](https://docs.dmoj.ca/#/site/mathoid) and [Texoid](https://docs.dmoj.ca/#/site/texoid).

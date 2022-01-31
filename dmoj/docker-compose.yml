@@ -17,24 +17,24 @@ services:
     networks: [site]
     #ports:
     #  - 6379:6379
-  texoid:
-    container_name: vnoj_texoid
-    build:
-      context: .
-      dockerfile: ./texoid/Dockerfile
-    image: vnoj/vnoj-texoid
-    restart: unless-stopped
-    networks: [site]
-  mathoid:
-    container_name: vnoj_mathoid
-    build:
-      context: .
-      dockerfile: ./mathoid/Dockerfile
-    image: vnoj/vnoj-mathoid
-    restart: unless-stopped
-    volumes:
-      - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
-    networks: [site]
+  #texoid:
+  #  container_name: vnoj_texoid
+  #  build:
+  #    context: .
+  #    dockerfile: ./texoid/Dockerfile
+  #  image: vnoj/vnoj-texoid
+  #  restart: unless-stopped
+  #  networks: [site]
+  #mathoid:
+  #  container_name: vnoj_mathoid
+  #  build:
+  #    context: .
+  #    dockerfile: ./mathoid/Dockerfile
+  #  image: vnoj/vnoj-mathoid
+  #  restart: unless-stopped
+  #  volumes:
+  #    - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
+  #  networks: [site]
   base:
     container_name: vnoj_base
     build:
@@ -62,7 +62,6 @@ services:
     working_dir: /site/
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, nginx, db]
-    depends_on: [base]
   celery:
     container_name: vnoj_celery
     build:
@@ -78,7 +77,6 @@ services:
     working_dir: /site/
     env_file: [environment/mysql.env, environment/site.env]
     networks: [site, db]
-    depends_on: [base]
   bridged:
     container_name: vnoj_bridged
     build:
@@ -96,7 +94,6 @@ services:
     ports:
       - 9998:9998
       - 9999:9999
-    depends_on: [base]
   wsevent:
     container_name: vnoj_wsevent
     build:
