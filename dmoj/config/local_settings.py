@@ -241,7 +241,7 @@ DMOJ_PDF_PROBLEM_CACHE = '/pdfcache'
 DMOJ_PDF_PROBLEM_INTERNAL = '/pdfcache'
 
 # Enable Selenium PDF generation
-USE_SELENIUM = True
+USE_SELENIUM = False
 
 ## Data download settings.
 # Uncomment to allow users to download their data

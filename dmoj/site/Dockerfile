@@ -11,6 +11,9 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     pip3 install selenium
 
+COPY site/wrap_chromium_binary /opt/bin/wrap_chromium_binary
+RUN /opt/bin/wrap_chromium_binary && rm /opt/bin/wrap_chromium_binary
+
 EXPOSE 8000
 
 ENTRYPOINT uwsgi --ini uwsgi.ini \
