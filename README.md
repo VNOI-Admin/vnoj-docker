@@ -28,19 +28,13 @@ Configure the environment variables in the files in `dmoj/environment/`. In part
 Next, build the images:
 
 ```sh
-$ docker-compose build
-```
-
-Or you can just pull them from Docker Hub:
-
-```sh
-$ docker-compose pull
+$ docker compose build
 ```
 
 Start up the site, so you can perform the initial migrations and generate the static files:
 
 ```sh
-$ docker-compose up -d site db redis celery
+$ docker compose up -d site db redis celery
 ```
 
 You will need to generate the schema for the database, since it is currently empty:
@@ -76,13 +70,13 @@ $ ./scripts/manage.py createsuperuser
 To start everything:
 
 ```sh
-$ docker-compose up -d
+$ docker compose up -d
 ```
 
 To stop everything:
 
 ```sh
-docker-compose down
+docker compose down
 ```
 
 ## Notes
@@ -116,7 +110,7 @@ Updating various sections of the site requires different images to be rebuilt.
 If any prerequisites were modified, you will need to rebuild most of the images:
 
 ```sh
-$ docker-compose up -d --build base site celery bridged wsevent
+$ docker compose up -d --build base site celery bridged wsevent
 ```
 
 If the static files are modified, read the section on [Managing Static Files](#managing-static-files).
@@ -124,7 +118,7 @@ If the static files are modified, read the section on [Managing Static Files](#m
 If only the source code is modified, a restart is sufficient:
 
 ```sh
-$ docker-compose restart site celery bridged wsevent
+$ docker compose restart site celery bridged wsevent
 ```
 
 ### Multiple Nginx Instances
@@ -220,7 +214,7 @@ Uncomment `ports` blocks in `dmoj/docker-compose.yml`. You also need to open the
 Now, let's start the services:
 
 ```sh
-docker-compose up -d nginx db redis bridged wsevent
+docker compose up -d nginx db redis bridged wsevent
 ```
 
 #### Worker
@@ -228,7 +222,7 @@ docker-compose up -d nginx db redis bridged wsevent
 You need to configure `dmoj/environment/site.env` and `dmoj/environment/mysql.env` to point to the central server.
 
 ```sh
-docker-compose up -d nginx site celery
+docker compose up -d nginx site celery
 ```
 
 ### Mathoid and Texoid
