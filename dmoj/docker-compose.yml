@@ -55,7 +55,6 @@ services:
       - userdatacache:/userdatacache/
       - contestdatacache:/contestdatacache/
       - cache:/cache/
-      - ./logs/:/logs/
       - ./media/:/media/
       - ./problems/:/problems/
       - ./repo/:/site/
@@ -72,7 +71,6 @@ services:
     volumes:
       - userdatacache:/userdatacache/
       - contestdatacache:/contestdatacache/
-      - ./logs/:/logs/
       - ./repo/:/site/
     working_dir: /site/
     env_file: [environment/mysql.env, environment/site.env]
@@ -85,7 +83,6 @@ services:
     image: vnoj/vnoj-bridged
     restart: unless-stopped
     volumes:
-      - ./logs/:/logs/
       - ./problems/:/problems/
       - ./repo/:/site/
     working_dir: /site/
@@ -122,7 +119,6 @@ services:
       - userdatacache:/userdatacache/
       - contestdatacache:/contestdatacache/
       - cache:/cache/
-      - ./logs/:/logs/
       - ./media/:/media/
       - ./nginx/conf.d/:/etc/nginx/conf.d/
     networks: [nginx]
