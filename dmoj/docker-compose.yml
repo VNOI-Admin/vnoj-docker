@@ -17,24 +17,6 @@ services:
     networks: [site]
     #ports:
     #  - 6379:6379
-  #texoid:
-  #  container_name: vnoj_texoid
-  #  build:
-  #    context: .
-  #    dockerfile: ./texoid/Dockerfile
-  #  image: vnoj/vnoj-texoid
-  #  restart: unless-stopped
-  #  networks: [site]
-  #mathoid:
-  #  container_name: vnoj_mathoid
-  #  build:
-  #    context: .
-  #    dockerfile: ./mathoid/Dockerfile
-  #  image: vnoj/vnoj-mathoid
-  #  restart: unless-stopped
-  #  volumes:
-  #    - ./mathoid/config.yaml:/node_modules/mathoid/config.yaml
-  #  networks: [site]
   base:
     build:
       context: .
@@ -47,10 +29,10 @@ services:
       context: .
       dockerfile: ./site/Dockerfile
     image: vnoj/vnoj-site
+    init: true
     restart: unless-stopped
     volumes:
       - assets:/assets/
-      - pdfcache:/pdfcache/
       - userdatacache:/userdatacache/
       - contestdatacache:/contestdatacache/
       - cache:/cache/
@@ -67,6 +49,7 @@ services:
       context: .
       dockerfile: ./celery/Dockerfile
     image: vnoj/vnoj-celery
+    init: true
     restart: unless-stopped
     volumes:
       - userdatacache:/userdatacache/
@@ -82,6 +65,7 @@ services:
       context: .
       dockerfile: ./bridged/Dockerfile
     image: vnoj/vnoj-bridged
+    init: true
     restart: unless-stopped
     volumes:
       - ./problems/:/problems/
@@ -99,6 +83,7 @@ services:
       context: .
       dockerfile: ./wsevent/Dockerfile
     image: vnoj/vnoj-wsevent
+    init: true
     restart: unless-stopped
     volumes:
       - ./repo/:/app/site/
@@ -118,7 +103,6 @@ services:
       - 80:80
     volumes:
       - assets:/assets/
-      - pdfcache:/pdfcache/
       - userdatacache:/userdatacache/
       - contestdatacache:/contestdatacache/
       - cache:/cache/
@@ -132,7 +116,6 @@ networks:
   nginx:
 volumes:
   assets:
-  pdfcache:
   userdatacache:
   contestdatacache:
   cache:

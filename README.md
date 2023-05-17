@@ -224,7 +224,3 @@ You need to configure `dmoj/environment/site.env` and `dmoj/environment/mysql.en
 ```sh
 docker compose up -d nginx site celery
 ```
-
-### Mathoid and Texoid
-
-This setup also contains Docker files for [Mathoid](https://github.com/wikimedia/mathoid) and [Texoid](https://github.com/DMOJ/texoid), but they are commented out as they are not used in VNOJ. For more information, refer to DMOJ docs for [Mathoid](https://docs.dmoj.ca/#/site/mathoid) and [Texoid](https://docs.dmoj.ca/#/site/texoid).

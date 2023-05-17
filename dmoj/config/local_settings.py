@@ -233,15 +233,16 @@ TIMEZONE_MAP = 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/23/Blue_M
 #DMOJ_HTTPS = 0
 
 ## PDF rendering settings.
+
+# Enable PDF generation.
+#DMOJ_PDF_PDFOID_URL = '<URL to your pdfoid install>.'
+
 # Directory to cache the PDF.
-DMOJ_PDF_PROBLEM_CACHE = '/pdfcache'
+#DMOJ_PDF_PROBLEM_CACHE = '/home/dmoj-uwsgi/pdfcache'
 
 # Path to use for nginx's X-Accel-Redirect feature.
 # Should be an internal location mapped to the above directory.
-DMOJ_PDF_PROBLEM_INTERNAL = '/pdfcache'
-
-# Enable Selenium PDF generation
-USE_SELENIUM = False
+#DMOJ_PDF_PROBLEM_INTERNAL = '/pdfcache'
 
 ## Data download settings.
 # Uncomment to allow users to download their data
@@ -272,16 +273,6 @@ DMOJ_CONTEST_DATA_INTERNAL = '/contestdatacache'
 # How often contest data can be exported.
 # This applies per contest, not per user.
 DMOJ_CONTEST_DATA_DOWNLOAD_RATELIMIT = datetime.timedelta(days=1)
-
-## Mathoid settings.
-#MATHOID_URL = 'http://mathoid:10044'
-#MATHOID_CACHE_ROOT = '/cache/mathoid/'
-#MATHOID_CACHE_URL = '//{host}/mathoid/'.format(host=HOST)
-
-## Texoid settings.
-#TEXOID_URL = 'http://texoid:8888'
-#TEXOID_CACHE_ROOT = '/cache/texoid/'
-#TEXOID_CACHE_URL = '//{host}/texoid/'.format(host=HOST)
 
 ## ======== Logging Settings ========
 # Documentation: https://docs.djangoproject.com/en/3.2/ref/settings/#logging
@@ -328,8 +319,6 @@ LOGGING = {
 #SOCIAL_AUTH_FACEBOOK_SECRET = ''
 #SOCIAL_AUTH_GITHUB_SECURE_KEY = ''
 #SOCIAL_AUTH_GITHUB_SECURE_SECRET = ''
-#SOCIAL_AUTH_DROPBOX_OAUTH2_KEY = ''
-#SOCIAL_AUTH_DROPBOX_OAUTH2_SECRET = ''
 
 ## ======== Custom Configuration ========
 # You may add whatever Django configuration you would like here.
