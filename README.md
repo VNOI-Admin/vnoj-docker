@@ -76,7 +76,7 @@ $ docker compose up -d
 To stop everything:
 
 ```sh
-docker compose down
+$ docker compose down
 ```
 
 ## Notes
