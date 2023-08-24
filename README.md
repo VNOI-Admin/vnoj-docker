@@ -23,7 +23,15 @@ Initialize the setup by moving the configuration files into the submodule and cr
 $ ./scripts/initialize
 ```
 
-Configure the environment variables in the files in `dmoj/environment/`. In particular, set the MYSQL passwords in `mysql.env` and `mysql-admin.env`, and the host and secret key in `site.env`. Also, configure the `server_name` directive in `dmoj/nginx/conf.d/nginx.conf`.
+Next, configure the environment variables in the files in `dmoj/environment/`. Create the files from the examples:
+
+```sh
+$ cp environment/mysql-admin.env.example environment/mysql-admin.env
+$ cp environment/mysql.env.example environment/mysql.env
+$ cp environment/site.env.example environment/site.env
+```
+
+Then, set the MYSQL passwords in `mysql.env` and `mysql-admin.env`, and the host and secret key in `site.env`. Also, configure the `server_name` directive in `dmoj/nginx/conf.d/nginx.conf`.
 
 Next, build the images:
 
