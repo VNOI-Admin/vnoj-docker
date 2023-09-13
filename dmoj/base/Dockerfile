@@ -6,13 +6,16 @@ RUN apt-get update && \
         libxml2-dev libxslt1-dev zlib1g-dev \
         mariadb-client libmariadb-dev \
         libjpeg-dev debconf-utils pkg-config && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/*
 
+WORKDIR /
 COPY repo/requirements.txt .
 COPY repo/additional_requirements.txt .
-RUN npm install -g sass postcss-cli postcss autoprefixer && \
+COPY repo/package.json .
+COPY repo/package-lock.json .
+RUN npm install && \
     pip3 install -r requirements.txt && \
     pip3 install -r additional_requirements.txt
