@@ -17,7 +17,7 @@ $ cd vnoj-docker/dmoj
 
 From now on, it is assumed you are in the `dmoj` directory.
 
-Initialize the setup by moving the configuration files into the submodule and creating the necessary directories:
+Initialize the setup by moving the configuration files into the submodule and creating the necessary directories. You need to run this whenever there are changes to `config/local_settings.py`:
 
 ```sh
 $ ./scripts/initialize
