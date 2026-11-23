@@ -1,4 +1,4 @@
-FROM python:3.11-slim-bullseye
+FROM python:3.11-slim-bookworm
 
 RUN apt-get update && \
     apt-get install -y \
@@ -18,4 +18,6 @@ COPY repo/package.json .
 COPY repo/package-lock.json .
 RUN npm install && \
     pip3 install -r requirements.txt && \
-    pip3 install -r additional_requirements.txt
+    pip3 install --use-pep517 -r additional_requirements.txt && \
+    pip3 install --use-pep517 lxml_html_clean \
+        "markdown2 @ git+https://github.com/VNOI-Admin/python-markdown2.git@2ef56536045fc4eefe63bc5ee396cfa509b98a1a"
