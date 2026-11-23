@@ -1,0 +1,110 @@
+#!/bin/bash
+
+# ===================== Settings (blank = you'll be asked) =====================
+MYSQL_ROOT_PASSWORD=""
+MYSQL_PASSWORD=""
+SECRET_KEY=""      # any long random string
+HOST=""            # e.g. localhost or oj.example.com
+LOAD_DEMO=""       # yes/no - demo data creates a superuser admin/admin
+# ==============================================================================
+
+set -euo pipefail
+cd "$(dirname "$0")/.."
+source scripts/lib/setup_lib.sh
+
+MARKER=.setup-done
+export COMPOSE_EXEC_FLAGS=-T
+
+step() { printf '\n\033[1;34m==> %s\033[0m\n' "$*"; }
+die()  { printf '\n\033[1;31mError: %s\033[0m\n' "$*" >&2; exit 1; }
+trap 'printf "\n\033[1;31mSetup failed at line %s. Fix the problem and run ./scripts/setup again.\033[0m\n" "$LINENO" >&2' ERR
+
+# --- 1. Prerequisites ---------------------------------------------------------
+step "Checking prerequisites"
+command -v docker >/dev/null || die "Docker is not installed."
+docker compose version >/dev/null 2>&1 || die "Docker Compose v2 ('docker compose') is not available."
+docker info >/dev/null 2>&1 || die "Docker daemon is not running. Start Docker and try again."
+if [ ! -f repo/manage.py ]; then
+    step "Fetching the VNOJ source (git submodule)"
+    git -C .. submodule update --init --recursive
+fi
+
+# --- 2. Configuration ---------------------------------------------------------
+if env_files_exist environment; then
+    step "Using existing environment/*.env files"
+    if [ -n "$MYSQL_ROOT_PASSWORD$MYSQL_PASSWORD$SECRET_KEY$HOST" ]; then
+        echo "Note: settings at the top of this script are ignored because the .env files already exist."
+        echo "      Edit environment/*.env directly (see README about changing MySQL passwords)."
+    fi
+    MYSQL_ROOT_PASSWORD=$(read_env_value environment/mysql-admin.env MYSQL_ROOT_PASSWORD)
+    HOST=$(read_env_value environment/site.env HOST) || die "HOST is missing from environment/site.env."
+    valid_host "$HOST" || die "HOST='$HOST' in environment/site.env is not a valid host name. Fix HOST, SITE_FULL_URL and MEDIA_URL there."
+else
+    if db_has_data database; then
+        die "database/ already has data but environment/*.env files are missing.
+MariaDB keeps the passwords it was first created with, so new passwords would not work.
+Either restore your old .env files, or delete database/ to start fresh (this erases all data)."
+    fi
+    step "Configuring"
+    ask_value MYSQL_ROOT_PASSWORD "MySQL root password" secret
+    ask_value MYSQL_PASSWORD "MySQL password for the site user" secret
+    ask_value SECRET_KEY "Django SECRET_KEY" secret
+    ask_host || die "A valid HOST is required."
+    write_env_files environment
+    echo "Wrote environment/mysql-admin.env, mysql.env, site.env"
+fi
+
+scripts/initialize
+set_server_name nginx/conf.d/nginx.conf "$HOST"
+
+# Fresh database (e.g. database/ was deleted) -> load fixtures again.
+reset_marker_if_fresh database "$MARKER"
+if [ ! -f "$MARKER" ]; then
+    ask_value LOAD_DEMO "Load demo data? It creates superuser admin/admin (yes/no)"
+fi
+
+# --- 3. Build & start core services -------------------------------------------
+step "Building images (this can take a while the first time)"
+docker compose build base
+docker compose build
+
+step "Starting database, redis, site and celery"
+docker compose up -d db redis site celery
+
+step "Waiting for the database"
+for i in $(seq 1 60); do
+    # TCP ping: only the final server listens on TCP, not MariaDB's temporary init server.
+    if docker compose exec -T -e MYSQL_PWD="$MYSQL_ROOT_PASSWORD" db sh -c \
+        'mariadb-admin ping -h127.0.0.1 -uroot --silent 2>/dev/null || mysqladmin ping -h127.0.0.1 -uroot --silent 2>/dev/null' \
+        >/dev/null 2>&1; then
+        echo "Database is ready."
+        break
+    fi
+    [ "$i" -eq 60 ] && die "Database did not become ready in 2 minutes. Check: docker compose logs db"
+    sleep 2
+done
+
+# --- 4. Migrate, static files, fixtures ---------------------------------------
+step "Running migrations"
+scripts/migrate
+
+step "Building static files"
+scripts/copy_static
+
+if [ ! -f "$MARKER" ]; then
+    step "Loading initial data"
+    scripts/manage.py loaddata navbar
+    scripts/manage.py loaddata language_small
+    case "$LOAD_DEMO" in
+        y|Y|yes|YES|Yes) scripts/manage.py loaddata demo
+                         echo "Demo superuser: admin / admin  (change this password!)" ;;
+    esac
+    touch "$MARKER"
+fi
+
+# --- 5. Start everything ------------------------------------------------------
+step "Starting all services"
+docker compose up -d
+
+printf '\n\033[1;32mVNOJ is running at http://%s/\033[0m\n' "$HOST"
+echo "Create your own admin with: ./scripts/manage.py createsuperuser"
