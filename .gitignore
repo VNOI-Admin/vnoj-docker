@@ -3,3 +3,4 @@ dmoj/logs/
 dmoj/media/
 dmoj/problems/
 dmoj/environment/*.env
+dmoj/.setup-done

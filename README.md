@@ -17,7 +17,21 @@ $ cd vnoj-docker/dmoj
 
 From now on, it is assumed you are in the `dmoj` directory.
 
-Initialize the setup by moving the configuration files into the submodule and creating the necessary directories:
+### Quick start (recommended)
+
+Open `scripts/setup` and fill in the settings block at the top (MySQL passwords, `SECRET_KEY`, host, whether to load demo data). Anything left blank will be asked for when the script runs. Then:
+
+```sh
+$ ./scripts/setup
+```
+
+This creates the environment files, sets nginx's `server_name`, builds the images, waits for the database, runs migrations, builds static files, loads the fixtures (first install only) and starts everything. It is safe to run again: existing `environment/*.env` files are never overwritten.
+
+> MariaDB only applies the MySQL passwords when `database/` is first created. To change them later, change them inside MariaDB too (or delete `database/` to start fresh, which erases all data).
+
+### Manual setup
+
+If you prefer to do it step by step, initialize the setup by moving the configuration files into the submodule and creating the necessary directories:
 
 ```sh
 $ ./scripts/initialize
